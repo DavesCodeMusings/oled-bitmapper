@@ -2,7 +2,7 @@
 
 ## What is it?
 
-The file oled-bitmapper.html is an HTML/JavaScript utility to generate the array values needed to display bitmaps on an OLED display. I'm using to create icons for a [128x64 with the SSD1306 driver chip](https://www.adafruit.com/product/326) and the Adafruit library. The bitmaps generated should work equally well with a 128x32 display or other size OLEDs/LCDs.
+The file oled-bitmapper.html is an HTML/JavaScript utility to generate the array values needed to display bitmaps on an OLED display. I'm using it to create icons for a [128x64 with the SSD1306 driver chip](https://www.adafruit.com/product/326) and the Adafruit library. The bitmaps generated should work equally well with a 128x32 display or other size OLEDs/LCDs.
 
 ## Why should I care?
 
