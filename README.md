@@ -21,4 +21,6 @@ It's really simple:
 
 ## Can I see it?
 
-Upload the weather.ino sketch to a microcontroller with an I2C attached display. (Make sure the I2C address matched your device.) You will see a simulation of a weather station display along with icons for sunny, cloudy, rainy, and stormy.
+If you want a quick look at the bitmaps produced with this tool, there is [a photo of an OLED display](https://github.com/DavesCodeMusings/oled-bitmapper/blob/main/oled-photo.png) in the code repository. On the top half of the display, you'll see text and bitmaps mixed together to make a simulated weather display. The bottom half shows the other bitmap combinations that can be used to represent barometer readings in the range of fair, change, precipitation and storms. 
+
+If you want to play around on your own microcontroller, upload the weather.ino sketch to a device with an I2C attached display. (Make sure the I2C address matched your device.) You will see a simulation of a weather station display along with icons for sunny, cloudy, rainy, and stormy. If you have a 128x64 display you'll get the same as what's shown in the photo. If your display is smaller, you either won't see the row of icons on the bottom or you'll get an error. I don't have a 128x32 display to test.
