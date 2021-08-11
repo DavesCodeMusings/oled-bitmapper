@@ -25,7 +25,7 @@ If you want a quick look at the bitmaps produced with this tool, there is [a pho
 
 If you want to play around on your own microcontroller, upload the weather.ino sketch to a device with an I2C attached display. (Make sure the I2C address matched your device.) You will see a simulation of a weather station display along with icons for sunny, cloudy, rainy, and stormy. If you have a 128x64 display you'll get the same as what's shown in the photo. If your display is smaller, you either won't see the row of icons on the bottom or you'll get an error. I don't have a 128x32 display to test.
 
-There is also a [screenshot of the tool](https://github.com/DavesCodeMusings/oled-bitmapper/blob/main/oled-bitmapper-screenshot.png) At this point, it is very utilitarian with no CSS styling, but it gets the job done. It can create bitmaps up to 32x32 by changing the dimensions with the dropdown selections.
+There is also a [screenshot of the tool](https://github.com/DavesCodeMusings/oled-bitmapper/blob/main/oled-bitmapper-screenshot.png). At this point, it is very utilitarian with no CSS styling, but it gets the job done. It can create bitmaps up to 32x32 by changing the dimensions with the dropdown selections.
 
 ## Where is this going?
 
