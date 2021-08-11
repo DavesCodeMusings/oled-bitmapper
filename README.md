@@ -14,9 +14,9 @@ I find it easier to create icons this way than using a general purpose image edi
 
 It's really simple:
 
-1. Download oled-bitmapper.html to your PC.
+1. Download [oled-bitmapper.html](https://github.com/DavesCodeMusings/oled-bitmapper/blob/main/oled_bitmapper.html) to your PC.
 2. Run it in a browser.
-3. Start clicking.
+3. Start clicking pixels.
 4. Copy the array definition to your project source code.
 
 ## Can I see it?
