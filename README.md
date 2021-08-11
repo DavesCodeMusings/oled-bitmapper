@@ -1,4 +1,5 @@
 # oled-bitmapper
+![a photo of an OLED display](https://github.com/DavesCodeMusings/oled-bitmapper/blob/main/oled-photo.png)
 
 ## What is it?
 
