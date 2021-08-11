@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+
+<html lang="en-US">
+
+<head>
+  <title>OLED BitMap Generator</title>
+  <meta charset="utf-8">
+
+  <!--
+  Bitmap array generator for SSD1306 and possibly other microcontroller displays.
+  
+  This is free and unencumbered software released into the public domain.
+
+  Anyone is free to copy, modify, publish, use, compile, sell, or
+  distribute this software, either in source code form or as a compiled
+  binary, for any purpose, commercial or non-commercial, and by any
+  means.
+
+  In jurisdictions that recognize copyright laws, the author or authors
+  of this software dedicate any and all copyright interest in the
+  software to the public domain. We make this dedication for the benefit
+  of the public at large and to the detriment of our heirs and
+  successors. We intend this dedication to be an overt act of
+  relinquishment in perpetuity of all present and future rights to this
+  software under copyright law.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+  OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+  OTHER DEALINGS IN THE SOFTWARE.
+
+  For more information, please refer to <http://unlicense.org/>
+  -->
+  <script>
+    var gridArray=[];
+    var bytesPerRow = 1;
+
+    function displayArray() {
+      document.getElementById('output-bitmap').innerHTML = JSON.stringify(gridArray).replace(/\[/, "{").replace(/\]/,"}");
+    }
+
+    function updateArray(row, col) {
+      console.log(`Updating (row, col) = (${row}, ${col})`);
+      let byteNum = Math.floor(col / 8);
+      let bitNum = 8 - col % 8 - 1;
+      let arrayElement = row * bytesPerRow + byteNum;
+
+      console.log(`Array row: ${row}, Byte Number: ${byteNum}, Bit Number: ${bitNum}, Array Element: ${arrayElement}`);
+      let checkBoxID = (event.target || event.srcElement).id;
+      console.log(`Checkbox ID: ${checkBoxID}`);
+      if (document.getElementById(checkBoxID).checked) {
+        console.log("Checked!");
+        gridArray[arrayElement] += Math.pow(2, bitNum);
+        document.getElementById("preview").getContext("2d").fillStyle = "#00FF00";
+      }
+      else {
+        console.log("Unchecked!");
+        gridArray[arrayElement] -= Math.pow(2, bitNum);
+        document.getElementById("preview").getContext("2d").fillStyle = "#000000";
+      }
+      console.log(Math.pow(2, bitNum));
+
+      document.getElementById("preview").getContext("2d").fillRect(col, row, 1, 1);
+
+      displayArray();
+    }
+
+    function generateGrid(rows, cols) {
+      bytesPerRow = Math.floor(cols / 8);
+      console.log(`Rows: ${rows}, Cols: ${cols}, Bytes per row: ${bytesPerRow}`);
+
+      document.getElementById('output-height').innerHTML = rows;
+      document.getElementById('output-width').innerHTML = cols;
+
+      delete gridArray;  // Always start with an empty array.
+      gridArray = [];
+
+      document.getElementById('grid').innerHTML = '';
+      for (let r = 0; r < rows; r++) {
+        if (r % 8 == 0) {
+          document.getElementById('grid').innerHTML += '<br>\n';
+        }
+        for (let c = 0; c < cols; c++) {
+          if (c % 8 == 0) {
+            gridArray.push(0);
+            document.getElementById('grid').innerHTML += ' &nbsp; ';
+          }
+          document.getElementById('grid').innerHTML += `<input id="Row${r}Column${c}" onchange="updateArray(${r}, ${c});" type="checkbox">`;
+        }
+        document.getElementById('grid').innerHTML += '<br>\n';
+      }
+      displayArray();
+
+      document.getElementById("preview").getContext("2d").fillStyle = "#000000";
+      document.getElementById("preview").getContext("2d").fillRect(0, 0, 128, 32);
+    }
+  </script>
+  <style>
+    canvas {
+      border: 5px solid green;
+    }
+  </style>
+</head>
+
+<body onload="generateGrid(8, 8);">
+  <header>
+    <h1>OLED Bitmap Generator</h1>
+  </header>
+
+  <main>
+    <form id="map-input">
+      <label for="rows">Rows</label>
+      <select id="rows">
+        <option>4</option>
+        <option selected>8</option>
+        <option>12</option>
+        <option>16</option>
+        <option>24</option>
+        <option>32</option>
+      </select>
+
+      <label for="cols">Columns</label>
+      <select id="cols">
+        <option selected>8</option>
+        <option>16</option>
+        <option>24</option>
+        <option>32</option>
+      </select>
+
+      <button type="button" onclick="generateGrid(Number(document.getElementById('rows').value), Number(document.getElementById('cols').value));">Generate Grid</button><br>
+
+      <span id="grid"></span>
+    </form>
+
+    <p>Sample variable declarations:</p>
+    <p>
+      height = <span id="output-height"></span>;<br>
+      width = <span id="output-width"></span>;<br>
+      bitmap = <span id="output-bitmap">{ }</span>;
+    </p>
+    <p>Preview:</p>
+    <canvas id="preview" width="128" height="32"></canvas>
+  </main>
+</body>
+
+</html>
