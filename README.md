@@ -1,4 +1,7 @@
 # oled-bitmapper
+
+Below is a photo of a 128x64 OLED showng images created with the oled-bitmapper tool. The bitmaps shown are also available in this repository. Just look for the files ending in .c
+
 ![a photo of an OLED display](https://github.com/DavesCodeMusings/oled-bitmapper/blob/main/oled-photo.png)
 
 _Photo enlarged to show detail. Actual display is much smaller._
@@ -32,4 +35,4 @@ There is also a [screenshot of the tool](https://github.com/DavesCodeMusings/ole
 
 ## Where is this going?
 
-At some point I may add the ability to load a bitmap from an array to enable editing rather than just creation. Though my goal was to create weather icons. The tool is just a happy byproduct.
+At some point I may add the ability to load a bitmap from an array to enable editing rather than just creation. Though my original goal was to create weather icons. The tool is just a happy byproduct.
