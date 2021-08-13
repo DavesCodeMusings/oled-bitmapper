@@ -1,6 +1,6 @@
 # oled-bitmapper
 
-Below is a photo of a 128x64 OLED showng images created with the oled-bitmapper tool. The bitmaps shown are also available in this repository. Just look for the files ending in .c
+Below is a photo of a 128x64 OLED showng images created with the oled-bitmapper tool. The bitmaps shown are also available to download. Just look for the files in the repository ending with .c
 
 ![a photo of an OLED display](https://github.com/DavesCodeMusings/oled-bitmapper/blob/main/oled-photo.png)
 
