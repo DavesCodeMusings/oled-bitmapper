@@ -1,13 +1,268 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en-US">
 
 <head>
-  <title>OLED Bitmapper</title>
+  <title>OLED BitMap Generator</title>
+  <meta charset="utf-8">
+
+  <!--
+  Bitmap array generator for SSD1306 and possibly other microcontroller displays.
+  
+  This is free and unencumbered software released into the public domain.
+
+  Anyone is free to copy, modify, publish, use, compile, sell, or
+  distribute this software, either in source code form or as a compiled
+  binary, for any purpose, commercial or non-commercial, and by any
+  means.
+
+  In jurisdictions that recognize copyright laws, the author or authors
+  of this software dedicate any and all copyright interest in the
+  software to the public domain. We make this dedication for the benefit
+  of the public at large and to the detriment of our heirs and
+  successors. We intend this dedication to be an overt act of
+  relinquishment in perpetuity of all present and future rights to this
+  software under copyright law.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+  OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+  OTHER DEALINGS IN THE SOFTWARE.
+
+  For more information, please refer to <http://unlicense.org/>
+  -->
+  <script>
+    var bitmapArray = [];
+    var bitmapRows = 8;
+    var bitmapCols = 8;
+    var bytesPerRow = 1;  // Set whenever Columns dropdown is changed. 1 for 8 cols wide, 2 for 16 cols wide, etc.
+
+    function clearDisplays() {
+      document.getElementById('magnified').getContext('2d').fillStyle = 'black';
+      document.getElementById('magnified').getContext('2d').fillRect(0, 0, 128, 128);
+      document.getElementById('preview32').getContext('2d').fillStyle = 'black';
+      document.getElementById('preview32').getContext('2d').fillRect(0, 0, 128, 32);
+      document.getElementById('preview64').getContext('2d').fillStyle = 'black';
+      document.getElementById('preview64').getContext('2d').fillRect(0, 0, 128, 64);
+    }
+
+    function clearArray() {
+      bitmapArray = [0];
+      document.getElementById('array-declaration').value = '';
+      displayArray();
+    }
+
+    function setDimensions(rows, cols) {
+      bitmapRows = rows;
+      bitmapCols = cols;
+      bytesPerRow = Math.floor(cols / 8);
+      console.log(`Setting dimensions of: rows = ${rows}, cols = ${cols}, and bytes per row = ${bytesPerRow}`);
+      console.log(`Allocating ${Math.ceil(rows * bytesPerRow / 16)} rows in textarea`);
+      document.getElementById('array-declaration').rows = Math.ceil(rows * bytesPerRow / 16);
+    }
+
+    function generateGrid() {
+      document.getElementById('grid-input').innerHTML = '';
+      for (let row = 0; row < bitmapRows; row++) {
+        if (row % 8 == 0 && row != 0) {
+          document.getElementById('grid-input').innerHTML += '<br>\n';
+        }
+        for (let col = 0; col < bitmapCols; col++) {
+          if (col % 8 == 0) {
+            bitmapArray.push(0);  // Each element of the array holds 8 columns of pixels.
+            document.getElementById('grid-input').innerHTML += ' &nbsp; ';  // Create a visual break. Useful for 16px and larger.
+          }
+          document.getElementById('grid-input').innerHTML += `<input id="r${row}c${col}" onclick="updateArray(${row}, ${col}, this.checked); updateCanvas(${row}, ${col}, this.checked);" type="checkbox">`;
+        }
+        document.getElementById('grid-input').innerHTML += '<br>\n';
+      }
+    }
+
+    function displayArray() {
+      document.getElementById('array-declaration').value = '';
+      for (let i = 0; i < bitmapArray.length; i++) {
+        document.getElementById('array-declaration').value += bitmapArray[i];
+        if (i < bitmapArray.length - 1) {  // No comma at end of array declaration.
+          document.getElementById('array-declaration').value += ',';
+        }
+        if ((i + 1) % 16 == 0 && i != 0) {  // Newline every 16 bytes to help readability.
+          document.getElementById('array-declaration').value += '\n';
+        }
+      }
+    }
+
+    function updateArray(row, col, value) {
+      let byteNum = Math.floor(col / 8);
+      let bitNum = 8 - col % 8 - 1;
+      let arrayElement = row * bytesPerRow + byteNum;
+
+      console.log(`Setting grid pixel (${row}, ${col}) to ${value}`);
+      console.log(`Grid row: ${row}, Byte Number: ${byteNum}, Bit Number: ${bitNum}, Array Element: ${arrayElement}`);
+      if (value) {
+        bitmapArray[arrayElement] += Math.pow(2, bitNum);
+      }
+      else {
+        bitmapArray[arrayElement] -= Math.pow(2, bitNum);
+      }
+
+      displayArray();
+    }
+
+    function updateCanvas(row, col, value) {
+      if (value) {
+        document.getElementById("magnified").getContext("2d").fillStyle = 'aqua';
+        document.getElementById("preview32").getContext("2d").fillStyle = 'aqua';
+        document.getElementById("preview64").getContext("2d").fillStyle = 'aqua';
+      }
+      else {
+        document.getElementById("magnified").getContext("2d").fillStyle = 'black';
+        document.getElementById("preview32").getContext("2d").fillStyle = 'black';
+        document.getElementById("preview64").getContext("2d").fillStyle = 'black';
+      }
+      console.log(`Preview canvas pixel (${row}, ${col}) set to ${value}`);
+      document.getElementById("magnified").getContext("2d").fillRect(col * 4, row * 4, 4, 4);
+      document.getElementById("preview32").getContext("2d").fillRect(col, row, 1, 1);
+      document.getElementById("preview64").getContext("2d").fillRect(col, row, 1, 1);
+    }
+
+    function updateGrid(row, col, value) {
+      console.log(`Grid checkbox with id='r${row}c${col}' set to ${value}`)
+      document.getElementById(`r${row}c${col}`).checked = value;
+    }
+
+    function decodeArray(arrayText) {
+      generateGrid();
+      bitmapArray = JSON.parse(`[${arrayText}]`);
+      console.log('Array declaration changed. New value is:')
+      console.log(JSON.stringify(bitmapArray));
+
+      let col = 0;
+      for (let byte = 0; byte < bitmapArray.length; byte++) {
+        console.log(`Processing bitmapArray[${byte}] = ${bitmapArray[byte]}`)
+        let row = Math.floor(byte / bytesPerRow);
+        for (let bitMask = 128; bitMask >= 1; bitMask /= 2) {  // Loops through 128, 64, 32, 16, 8, 4, 2, 1.
+          console.log(`Applying bit mask ${bitMask} to isolate row: ${row}, col: ${col}`);
+          if (bitmapArray[byte] & bitMask) {
+            updateGrid(row, col, true);
+            updateCanvas(row, col, true);
+          }
+          else {
+            updateGrid(row, col, false);
+            updateCanvas(row, col, false);
+          }
+          col++;
+          if (col >= 8 * bytesPerRow) {
+            col = 0;
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 1024px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    #array-declaration {
+      border: 1px dotted gray;
+      margin-left: 2em;
+    }
+
+    aside {
+      float: right;
+      margin-left: 1em;
+      width: 150px;
+    }
+
+    canvas {
+      border: 5px solid green;
+    }
+
+    fieldset {
+      margin-top: 1em;
+      padding: 1em;
+    }
+
+    main {
+      width: calc(100% - 200px);
+    }
+
+    .right-justified {
+      text-align: right;
+    }
+  </style>
 </head>
 
-<body>
-  <h1>OLED Bitmapper</h1>
+<body onload="clearDisplays(); generateGrid();">
+  <header>
+    <h1>OLED Bitmap Generator</h1>
+  </header>
+
+  <!-- Having aside before main makes it easier to float to the top right. -->
+  <aside>
+    <p>4x Magnification</p>
+    <canvas id="magnified" width="128" height="128"></canvas>
+
+    <p>128 x 32 Display</p>
+    <canvas id="preview32" width="128" height="32"></canvas>
+
+    <p>128 x 64 Display</p>
+    <canvas id="preview64" width="128" height="64"></canvas>
+  </aside>
+
+  <main>
+    <form>
+      <div class="right-justified">
+        <button type="button"
+          onclick="clearArray(); clearDisplays(); generateGrid(Number(document.getElementById('rows').value), Number(document.getElementById('cols').value));">Clear</button>
+      </div>
+
+      <fieldset>
+        <legend>Bitmap Dimensions</legend>
+        <label for="rows">Rows</label>
+
+        <select id="rows"
+          onchange="clearArray(); clearDisplays(); setDimensions(Number(document.getElementById('rows').value), Number(document.getElementById('cols').value)); generateGrid();">
+          <option>4</option>
+          <option selected>8</option>
+          <option>12</option>
+          <option>16</option>
+          <option>24</option>
+          <option>32</option>
+        </select>
+
+        <label for="cols">Columns</label>
+        <select id="cols"
+          onchange="clearArray(); clearDisplays(); setDimensions(Number(document.getElementById('rows').value), Number(document.getElementById('cols').value)); generateGrid();">
+          <option selected>8</option>
+          <option>16</option>
+          <option>24</option>
+          <option>32</option>
+        </select>
+      </fieldset>
+
+      <fieldset>
+        <legend>C Array Declaration</legend>
+        <label for="array-declaration">unsigned char bitmap = {</label>
+        <br>
+        <textarea id="array-declaration" onchange="decodeArray(this.value);" onclick="this.select();" rows="2"
+          cols="80"></textarea><br>
+        };
+      </fieldset>
+      
+      <fieldset>
+        <legend>Direct Edit</legend>
+        <span id="grid-input"></span>
+      </fieldset>
+    </form>
+  </main>
 </body>
 
 </html>
