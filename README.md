@@ -33,6 +33,8 @@ If you want to play around on your own microcontroller, upload the [weather.ino]
 
 There is also a [screenshot of the tool](https://github.com/DavesCodeMusings/oled-bitmapper/blob/main/oled-bitmapper-screenshot.png). At this point, it is very utilitarian with no CSS styling, but it gets the job done. It can create bitmaps up to 32x32 by changing the dimensions with the dropdown selections.
 
+![screenshot](https://github.com/DavesCodeMusings/oled-bitmapper/blob/main/oled-bitmapper-screenshot.png)
+
 ## Where is this going?
 
 At some point I may add the ability to load a bitmap from an array to enable editing rather than just creation. Though my original goal was to create weather icons. The tool is just a happy byproduct.
