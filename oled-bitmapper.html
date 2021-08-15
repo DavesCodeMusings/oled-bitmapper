@@ -35,9 +35,9 @@
   For more information, please refer to <http://unlicense.org/>
   -->
   <script>
-    var gridArray = [];
-    var gridRows = 8;
-    var gridCols = 8;
+    var bitmapArray = [];
+    var bitmapRows = 8;
+    var bitmapCols = 8;
     var bytesPerRow = 1;  // Set whenever Columns dropdown is changed. 1 for 8 cols wide, 2 for 16 cols wide, etc.
 
     function clearDisplays() {
@@ -50,15 +50,14 @@
     }
 
     function clearArray() {
-      // delete gridArray;  // Always start with an empty array.
-      gridArray = [0];
+      bitmapArray = [0];
       document.getElementById('array-declaration').value = '';
       displayArray();
     }
 
     function setDimensions(rows, cols) {
-      gridRows = rows;
-      gridCols = cols;
+      bitmapRows = rows;
+      bitmapCols = cols;
       bytesPerRow = Math.floor(cols / 8);
       console.log(`Setting dimensions of: rows = ${rows}, cols = ${cols}, and bytes per row = ${bytesPerRow}`);
       console.log(`Allocating ${Math.ceil(rows * bytesPerRow / 16)} rows in textarea`);
@@ -66,20 +65,17 @@
     }
 
     function generateGrid() {
-      //delete gridArray;  // Always start with an empty array.
-      //gridArray = [];
-
       document.getElementById('grid-input').innerHTML = '';
-      for (let r = 0; r < gridRows; r++) {
-        if (r % 8 == 0 && r != 0) {
+      for (let row = 0; row < bitmapRows; row++) {
+        if (row % 8 == 0 && row != 0) {
           document.getElementById('grid-input').innerHTML += '<br>\n';
         }
-        for (let c = 0; c < gridCols; c++) {
-          if (c % 8 == 0) {
-            gridArray.push(0);  // Each element of the array holds 8 columns of pixels.
+        for (let col = 0; col < bitmapCols; col++) {
+          if (col % 8 == 0) {
+            bitmapArray.push(0);  // Each element of the array holds 8 columns of pixels.
             document.getElementById('grid-input').innerHTML += ' &nbsp; ';  // Create a visual break. Useful for 16px and larger.
           }
-          document.getElementById('grid-input').innerHTML += `<input id="r${r}c${c}" onclick="updateArray(${r}, ${c}, this.checked); updateCanvas(${r}, ${c}, this.checked);" type="checkbox">`;
+          document.getElementById('grid-input').innerHTML += `<input id="r${row}c${col}" onclick="updateArray(${row}, ${col}, this.checked); updateCanvas(${row}, ${col}, this.checked);" type="checkbox">`;
         }
         document.getElementById('grid-input').innerHTML += '<br>\n';
       }
@@ -87,9 +83,9 @@
 
     function displayArray() {
       document.getElementById('array-declaration').value = '';
-      for (let i = 0; i < gridArray.length; i++) {
-        document.getElementById('array-declaration').value += gridArray[i];
-        if (i < gridArray.length - 1) {  // No comma at end of array declaration.
+      for (let i = 0; i < bitmapArray.length; i++) {
+        document.getElementById('array-declaration').value += bitmapArray[i];
+        if (i < bitmapArray.length - 1) {  // No comma at end of array declaration.
           document.getElementById('array-declaration').value += ',';
         }
         if ((i + 1) % 16 == 0 && i != 0) {  // Newline every 16 bytes to help readability.
@@ -106,10 +102,10 @@
       console.log(`Setting grid pixel (${row}, ${col}) to ${value}`);
       console.log(`Grid row: ${row}, Byte Number: ${byteNum}, Bit Number: ${bitNum}, Array Element: ${arrayElement}`);
       if (value) {
-        gridArray[arrayElement] += Math.pow(2, bitNum);
+        bitmapArray[arrayElement] += Math.pow(2, bitNum);
       }
       else {
-        gridArray[arrayElement] -= Math.pow(2, bitNum);
+        bitmapArray[arrayElement] -= Math.pow(2, bitNum);
       }
 
       displayArray();
@@ -139,17 +135,17 @@
 
     function decodeArray(arrayText) {
       generateGrid();
-      gridArray = JSON.parse(`[${arrayText}]`);
+      bitmapArray = JSON.parse(`[${arrayText}]`);
       console.log('Array declaration changed. New value is:')
-      console.log(JSON.stringify(gridArray));
+      console.log(JSON.stringify(bitmapArray));
 
       let col = 0;
-      for (let byte = 0; byte < gridArray.length; byte++) {
-        console.log(`Processing gridArray[${byte}] = ${gridArray[byte]}`)
+      for (let byte = 0; byte < bitmapArray.length; byte++) {
+        console.log(`Processing bitmapArray[${byte}] = ${bitmapArray[byte]}`)
         let row = Math.floor(byte / bytesPerRow);
         for (let bitMask = 128; bitMask >= 1; bitMask /= 2) {  // Loops through 128, 64, 32, 16, 8, 4, 2, 1.
           console.log(`Applying bit mask ${bitMask} to isolate row: ${row}, col: ${col}`);
-          if (gridArray[byte] & bitMask) {
+          if (bitmapArray[byte] & bitMask) {
             updateGrid(row, col, true);
             updateCanvas(row, col, true);
           }
@@ -165,6 +161,7 @@
       }
     }
   </script>
+
   <style>
     body {
       font-family: sans-serif;
@@ -255,12 +252,13 @@
         <legend>C Array Declaration</legend>
         <label for="array-declaration">unsigned char bitmap = {</label>
         <br>
-        <textarea id="array-declaration" onchange="decodeArray(this.value);" onclick="this.select();" rows="2" cols="80"></textarea><br>
+        <textarea id="array-declaration" onchange="decodeArray(this.value);" onclick="this.select();" rows="2"
+          cols="80"></textarea><br>
         };
       </fieldset>
+      
       <fieldset>
         <legend>Direct Edit</legend>
-
         <span id="grid-input"></span>
       </fieldset>
     </form>
