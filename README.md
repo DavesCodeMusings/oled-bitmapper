@@ -35,6 +35,8 @@ There is also a [screenshot of the tool](https://github.com/DavesCodeMusings/ole
 
 ![screenshot](https://github.com/DavesCodeMusings/oled-bitmapper/blob/main/oled-bitmapper-screenshot.png)
 
+You can also use [OLED-Bitmapper on GitHub Pages](https://davescodemusings.github.io/oled-bitmapper/)
+
 ## Where is this going?
 
 At some point I may add the ability to load a bitmap from an array to enable editing rather than just creation. Though my original goal was to create weather icons. The tool is just a happy byproduct.
