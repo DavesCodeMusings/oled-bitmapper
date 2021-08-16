@@ -228,13 +228,13 @@
     <form>
       <div class="right-justified">
         <button type="button"
-          onclick="clearArray(); clearDisplays(); generateGrid(Number(document.getElementById('rows').value), Number(document.getElementById('cols').value));">Clear</button>
+          onclick="clearArray(); clearDisplays(); setDimensions(Number(document.getElementById('rows').value), Number(document.getElementById('cols').value)); generateGrid();">Clear</button>
       </div>
 
       <fieldset>
         <legend>Bitmap Dimensions</legend>
         <label for="rows">Rows</label>
-
+  
         <select id="rows"
           onchange="clearArray(); clearDisplays(); setDimensions(Number(document.getElementById('rows').value), Number(document.getElementById('cols').value)); generateGrid();">
           <option>4</option>
