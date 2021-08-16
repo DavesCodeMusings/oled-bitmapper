@@ -50,7 +50,7 @@
     }
 
     function clearArray() {
-      bitmapArray = [0];
+      bitmapArray = [];
       document.getElementById('array-declaration').value = '';
       displayArray();
     }
@@ -71,8 +71,8 @@
           document.getElementById('grid-input').innerHTML += '<br>\n';
         }
         for (let col = 0; col < bitmapCols; col++) {
-          if (col % 8 == 0) {
-            bitmapArray.push(0);  // Each element of the array holds 8 columns of pixels.
+          if (col % 8 == 0) {  // Each element of the array holds 8 columns of pixels.
+            bitmapArray.push(0);
             document.getElementById('grid-input').innerHTML += ' &nbsp; ';  // Create a visual break. Useful for 16px and larger.
           }
           document.getElementById('grid-input').innerHTML += `<input id="r${row}c${col}" onclick="updateArray(${row}, ${col}, this.checked); updateCanvas(${row}, ${col}, this.checked);" type="checkbox">`;
@@ -133,9 +133,9 @@
       document.getElementById(`r${row}c${col}`).checked = value;
     }
 
-    function decodeArray(arrayText) {
+    function decodeArray(arrayCSV) {
       generateGrid();
-      bitmapArray = JSON.parse(`[${arrayText}]`);
+      bitmapArray = JSON.parse(`[${arrayCSV}]`);
       console.log('Array declaration changed. New value is:')
       console.log(JSON.stringify(bitmapArray));
 
@@ -158,6 +158,11 @@
             col = 0;
           }
         }
+      }
+      let padBytes = bitmapRows * bytesPerRow - bitmapArray.length;  // Be sure to fill the entire Row x Col grid so editing won't encounter undefineds.
+      console.log(`Input stopped after ${bitmapArray.length} bytes, leaving ${padBytes} array elements to pad with zeros.`);
+      for (let byte = 0; byte < padBytes; byte++) {
+        bitmapArray.push(0);
       }
     }
   </script>
@@ -223,13 +228,13 @@
     <form>
       <div class="right-justified">
         <button type="button"
-          onclick="clearArray(); clearDisplays(); generateGrid(Number(document.getElementById('rows').value), Number(document.getElementById('cols').value));">Clear</button>
+          onclick="clearArray(); clearDisplays(); setDimensions(Number(document.getElementById('rows').value), Number(document.getElementById('cols').value)); generateGrid();">Clear</button>
       </div>
 
       <fieldset>
         <legend>Bitmap Dimensions</legend>
         <label for="rows">Rows</label>
-
+  
         <select id="rows"
           onchange="clearArray(); clearDisplays(); setDimensions(Number(document.getElementById('rows').value), Number(document.getElementById('cols').value)); generateGrid();">
           <option>4</option>
