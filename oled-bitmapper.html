@@ -165,6 +165,17 @@
         bitmapArray.push(0);
       }
     }
+
+    function changeDeclarationStyle() {
+      if (document.getElementById('c').checked) {
+        document.getElementById('array-opener').innerHTML = 'unsigned char bitmap = {'
+        document.getElementById('array-closer').innerHTML = '};'
+      }
+      else if (document.getElementById('micropython').checked) {
+        document.getElementById('array-opener').innerHTML = 'bitmap = bytearray(['
+        document.getElementById('array-closer').innerHTML = '])'
+      }
+    }
   </script>
 
   <style>
@@ -256,14 +267,18 @@
       </fieldset>
 
       <fieldset>
-        <legend>C Array Declaration</legend>
-        <label for="array-declaration">unsigned char bitmap = {</label>
+        <legend>Array Declaration</legend>
+        <label id="array-opener" for="array-declaration">unsigned char bitmap = {</label>
         <br>
         <textarea id="array-declaration" onchange="decodeArray(this.value);" onclick="this.select();" rows="2"
           cols="80"></textarea><br>
-        };
+        <span id="array-closer">};</span>
+        <br><br>
+        Declaration Style:
+        <input type="radio" id="c" name="language" onchange="changeDeclarationStyle()" value="C" checked><label for="c">C / C++</label>
+        <input type="radio" id="micropython" name="language" onchange="changeDeclarationStyle()" value="MicroPython"><label for="micropython">MicroPython (using framebuf.MONO_HLSB format.)</label>
       </fieldset>
-      
+
       <fieldset>
         <legend>Direct Edit</legend>
         <span id="grid-input"></span>
