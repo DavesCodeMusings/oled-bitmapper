@@ -1,3 +1,7 @@
+/*
+ * Bitmaps for simulating 7-segment numeric vacuum fluorescent displays on an OLED.
+ * All bitmaps are 8 wide x 12 high and are padded with zeros where needed to fit the space.
+ */
 sevenSegmenMed[10][12] = {
   {244,4,132,132,132,0,132,132,132,4,244,0},
   {4,4,4,4,4,0,4,4,4,4,4,0},

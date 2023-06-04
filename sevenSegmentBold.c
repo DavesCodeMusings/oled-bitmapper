@@ -1,5 +1,5 @@
 /*
- * Bitmaps for simulating 7-segment LED displays on an OLED.
+ * Bitmaps for simulating 7-segment numeric LED displays on an OLED.
  * All bitmaps are 16 wide x 24 high and are padded with zeros where needed to fit the space.
  */
 unsigned char sevenSegmentBold[10][48] = {
